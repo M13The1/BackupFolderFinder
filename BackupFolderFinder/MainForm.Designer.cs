@@ -32,10 +32,10 @@
             this.txtRootFolder = new System.Windows.Forms.TextBox();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.btnScan = new System.Windows.Forms.Button();
-            this.dvgResults = new System.Windows.Forms.DataGridView();
+            this.dgvResults = new System.Windows.Forms.DataGridView();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            ((System.ComponentModel.ISupportInitialize)(this.dvgResults)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvResults)).BeginInit();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -75,15 +75,22 @@
             this.btnScan.UseVisualStyleBackColor = true;
             this.btnScan.Click += new System.EventHandler(this.btnScan_Click);
             // 
-            // dvgResults
+            // dgvResults
             // 
-            this.dvgResults.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dvgResults.Location = new System.Drawing.Point(12, 65);
-            this.dvgResults.Name = "dvgResults";
-            this.dvgResults.RowHeadersWidth = 51;
-            this.dvgResults.RowTemplate.Height = 24;
-            this.dvgResults.Size = new System.Drawing.Size(858, 388);
-            this.dvgResults.TabIndex = 4;
+            this.dgvResults.AllowUserToAddRows = false;
+            this.dgvResults.AllowUserToDeleteRows = false;
+            this.dgvResults.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvResults.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvResults.Location = new System.Drawing.Point(12, 65);
+            this.dgvResults.MultiSelect = false;
+            this.dgvResults.Name = "dgvResults";
+            this.dgvResults.ReadOnly = true;
+            this.dgvResults.RowHeadersVisible = false;
+            this.dgvResults.RowHeadersWidth = 51;
+            this.dgvResults.RowTemplate.Height = 24;
+            this.dgvResults.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvResults.Size = new System.Drawing.Size(858, 388);
+            this.dgvResults.TabIndex = 4;
             // 
             // statusStrip1
             // 
@@ -108,7 +115,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(882, 553);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.dvgResults);
+            this.Controls.Add(this.dgvResults);
             this.Controls.Add(this.btnScan);
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.txtRootFolder);
@@ -116,7 +123,7 @@
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Backup Folder Finder";
-            ((System.ComponentModel.ISupportInitialize)(this.dvgResults)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvResults)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -130,7 +137,7 @@
         private System.Windows.Forms.TextBox txtRootFolder;
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.Button btnScan;
-        private System.Windows.Forms.DataGridView dvgResults;
+        private System.Windows.Forms.DataGridView dgvResults;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel lblStatus;
     }

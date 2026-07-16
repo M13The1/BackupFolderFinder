@@ -68,20 +68,17 @@ namespace BackupFolderFinder
 
             var duplicates = finder.Find(backups);
 
-            string message = "";
+            dgvResults.DataSource = duplicates;
+            dgvResults.Columns["BackupDate"].DefaultCellStyle.Format = "dd-MMM-yyyy";
+            dgvResults.Columns["ProjectName"].HeaderText = "Project";
 
-            foreach (var item in duplicates)
-            {
-                message += item.ProjectName +
-                           "   " +
-                           item.BackupDate.ToShortDateString() +
-                           "   " +
-                           item.Count +
-                           " backups" +
-                           System.Environment.NewLine;
-            }
+            dgvResults.Columns["BackupDate"].HeaderText = "Date";
 
-            MessageBox.Show(message);
+            dgvResults.Columns["Count"].HeaderText = "No. of Backups";
+
+            dgvResults.Columns["Times"].HeaderText = "Backup Times";
+
+            lblStatus.Text = duplicates.Count + " duplicate days found.";
         }
     }
 }
