@@ -21,8 +21,10 @@ namespace BackupFolderFinder.Services
                     BackupDate = g.Key.BackupDate,
                     Count = g.Count(),
                     Times = string.Join(", ",
-                        g.OrderBy(x => x.Time)
-                         .Select(x => x.Time))
+    g.OrderBy(x => x.Time)
+     .Select(x => x.Time)),
+
+                    FolderPath = System.IO.Path.GetDirectoryName(g.First().BackupFolder)
                 })
                 .OrderBy(x => x.ProjectName)
                 .ThenBy(x => x.BackupDate)

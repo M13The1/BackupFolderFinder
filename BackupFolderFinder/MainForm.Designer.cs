@@ -91,6 +91,7 @@
             this.dgvResults.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvResults.Size = new System.Drawing.Size(858, 388);
             this.dgvResults.TabIndex = 4;
+            this.dgvResults.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvResults_CellDoubleClick);
             // 
             // statusStrip1
             // 

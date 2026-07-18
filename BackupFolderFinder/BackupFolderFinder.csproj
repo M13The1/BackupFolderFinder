@@ -53,9 +53,11 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\BackupInfo.cs" />
+    <Compile Include="Models\BackupRetentionGroup.cs" />
     <Compile Include="Models\DuplicateBackupGroup.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\BackupRetentionAnalyzer.cs" />
     <Compile Include="Services\BackupScanner.cs" />
     <Compile Include="Services\DuplicateBackupFinder.cs" />
     <EmbeddedResource Include="MainForm.resx">

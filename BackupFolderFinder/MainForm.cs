@@ -9,6 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BackupFolderFinder.Services;
+using BackupFolderFinder.Models;
+using System.Collections.Generic;
+
 
 namespace BackupFolderFinder
 {
@@ -34,51 +37,71 @@ namespace BackupFolderFinder
             }
         }
 
+        private void DisplayResults(List<DuplicateBackupGroup> duplicates)
+        {
+            dgvResults.DataSource = null;
+            dgvResults.DataSource = duplicates;
+
+            dgvResults.Columns["BackupDate"].DefaultCellStyle.Format = "dd-MMM-yyyy";
+
+            dgvResults.Columns["ProjectName"].HeaderText = "Project";
+            dgvResults.Columns["BackupDate"].HeaderText = "Date";
+            dgvResults.Columns["Count"].HeaderText = "No. of Backups";
+            dgvResults.Columns["Times"].HeaderText = "Backup Times";
+            dgvResults.Columns["FolderPath"].Visible = false;
+
+            lblStatus.Text = duplicates.Count + " duplicate days found.";
+        }
+
         private void btnScan_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtRootFolder.Text))
             {
-                MessageBox.Show(
-                    "Please select a Backup folder.",
-                    "Backup Folder Finder",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-
+                MessageBox.Show("Please select a Backup folder.");
                 return;
             }
-
-            if (!Directory.Exists(txtRootFolder.Text))
-            {
-                MessageBox.Show(
-                    "The selected folder does not exist.",
-                    "Backup Folder Finder",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-
-                return;
-            }
-
-            lblStatus.Text = "Ready to scan.";
 
             BackupScanner scanner = new BackupScanner();
-
             var backups = scanner.Scan(txtRootFolder.Text);
 
-            DuplicateBackupFinder finder = new DuplicateBackupFinder();
+            BackupRetentionAnalyzer analyzer = new BackupRetentionAnalyzer();
+            var retentionGroups = analyzer.Analyze(backups);
 
-            var duplicates = finder.Find(backups);
+            DisplayRetentionResults(retentionGroups);
+        }
 
-            dgvResults.DataSource = duplicates;
-            dgvResults.Columns["BackupDate"].DefaultCellStyle.Format = "dd-MMM-yyyy";
+        private void DisplayRetentionResults(List<BackupRetentionGroup> groups)
+        {
+            dgvResults.DataSource = null;
+            dgvResults.AutoGenerateColumns = true;
+            dgvResults.DataSource = groups;
+
+            // Hide object properties
+            dgvResults.Columns["KeepBackup"].Visible = false;
+            dgvResults.Columns["DeleteBackups"].Visible = false;
+
+            // Rename headers
             dgvResults.Columns["ProjectName"].HeaderText = "Project";
-
             dgvResults.Columns["BackupDate"].HeaderText = "Date";
+            dgvResults.Columns["KeepTime"].HeaderText = "Keep";
+            dgvResults.Columns["DeleteTimes"].HeaderText = "Delete";
+            dgvResults.Columns["DeleteCount"].HeaderText = "Delete Count";
 
-            dgvResults.Columns["Count"].HeaderText = "No. of Backups";
+            // Format date
+            dgvResults.Columns["BackupDate"].DefaultCellStyle.Format = "dd-MMM-yyyy";
 
-            dgvResults.Columns["Times"].HeaderText = "Backup Times";
+            lblStatus.Text = groups.Count + " days require cleanup.";
+        }
 
-            lblStatus.Text = duplicates.Count + " duplicate days found.";
+        private void dgvResults_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0)
+                return;
+
+            DuplicateBackupGroup item =
+                (DuplicateBackupGroup)dgvResults.Rows[e.RowIndex].DataBoundItem;
+
+            System.Diagnostics.Process.Start("explorer.exe", item.FolderPath);
         }
     }
 }

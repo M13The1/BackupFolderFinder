@@ -11,5 +11,7 @@ namespace BackupFolderFinder.Models
         public int Count { get; set; }
 
         public string Times { get; set; }
+
+        public string FolderPath { get; set; }
     }
 }
