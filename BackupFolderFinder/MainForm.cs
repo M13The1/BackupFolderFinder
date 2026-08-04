@@ -37,20 +37,14 @@ namespace BackupFolderFinder
             }
         }
 
-        private void DisplayResults(List<DuplicateBackupGroup> duplicates)
+        private void DisplayRetentionResults(List<BackupRetentionGroup> groups)
         {
             dgvResults.DataSource = null;
-            dgvResults.DataSource = duplicates;
+            dgvResults.DataSource = groups;
 
-            dgvResults.Columns["BackupDate"].DefaultCellStyle.Format = "dd-MMM-yyyy";
+            clmn_Date.DefaultCellStyle.Format = "dd-MMM-yyyy";
 
-            dgvResults.Columns["ProjectName"].HeaderText = "Project";
-            dgvResults.Columns["BackupDate"].HeaderText = "Date";
-            dgvResults.Columns["Count"].HeaderText = "No. of Backups";
-            dgvResults.Columns["Times"].HeaderText = "Backup Times";
-            dgvResults.Columns["FolderPath"].Visible = false;
-
-            lblStatus.Text = duplicates.Count + " duplicate days found.";
+            lblStatus.Text = groups.Count + " days require cleanup.";
         }
 
         private void btnScan_Click(object sender, EventArgs e)
@@ -70,38 +64,65 @@ namespace BackupFolderFinder
             DisplayRetentionResults(retentionGroups);
         }
 
-        private void DisplayRetentionResults(List<BackupRetentionGroup> groups)
-        {
-            dgvResults.DataSource = null;
-            dgvResults.AutoGenerateColumns = true;
-            dgvResults.DataSource = groups;
-
-            // Hide object properties
-            dgvResults.Columns["KeepBackup"].Visible = false;
-            dgvResults.Columns["DeleteBackups"].Visible = false;
-
-            // Rename headers
-            dgvResults.Columns["ProjectName"].HeaderText = "Project";
-            dgvResults.Columns["BackupDate"].HeaderText = "Date";
-            dgvResults.Columns["KeepTime"].HeaderText = "Keep";
-            dgvResults.Columns["DeleteTimes"].HeaderText = "Delete";
-            dgvResults.Columns["DeleteCount"].HeaderText = "Delete Count";
-
-            // Format date
-            dgvResults.Columns["BackupDate"].DefaultCellStyle.Format = "dd-MMM-yyyy";
-
-            lblStatus.Text = groups.Count + " days require cleanup.";
-        }
-
         private void dgvResults_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0)
+            // We'll implement this later.
+        }
+
+        private void dgvResults_SelectionChanged(object sender, EventArgs e)
+        {
+            dgvDeleteList.Rows.Clear();
+
+            if (dgvResults.CurrentRow == null)
                 return;
 
-            DuplicateBackupGroup item =
-                (DuplicateBackupGroup)dgvResults.Rows[e.RowIndex].DataBoundItem;
+            BackupRetentionGroup group =
+                dgvResults.CurrentRow.DataBoundItem as BackupRetentionGroup;
 
-            System.Diagnostics.Process.Start("explorer.exe", item.FolderPath);
+            if (group == null)
+                return;
+
+            foreach (BackupInfo backup in group.DeleteBackups)
+            {
+                dgvDeleteList.Rows.Add(
+                    backup.Time,
+                    backup.BackupFolder);
+            }
+        }
+
+        private void btnDeleteSelected_Click(object sender, EventArgs e)
+        {
+            if (dgvResults.CurrentRow == null)
+                return;
+
+            BackupRetentionGroup group =
+                dgvResults.CurrentRow.DataBoundItem as BackupRetentionGroup;
+
+            if (group == null)
+                return;
+
+            DialogResult result = MessageBox.Show(
+                "Delete " + group.DeleteCount +
+                " duplicate backup(s)?\n\n" +
+                "The first backup (" + group.KeepTime + ") will be retained.",
+                "Confirm Delete",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (result != DialogResult.Yes)
+                return;
+
+            BackupDeleter deleter = new BackupDeleter();
+
+            deleter.Delete(group);
+
+            MessageBox.Show(
+                "Duplicate backups deleted successfully.",
+                "Completed",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+
+            btnScan.PerformClick();
         }
     }
 }
