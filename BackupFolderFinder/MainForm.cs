@@ -102,8 +102,7 @@ namespace BackupFolderFinder
                 return;
 
             DialogResult result = MessageBox.Show(
-                "Delete " + group.DeleteCount +
-                " duplicate backup(s)?\n\n" +
+                "Delete " + group.DeleteCount + " duplicate backup(s)?\n\n" +
                 "The first backup (" + group.KeepTime + ") will be retained.",
                 "Confirm Delete",
                 MessageBoxButtons.YesNo,
@@ -114,10 +113,21 @@ namespace BackupFolderFinder
 
             BackupDeleter deleter = new BackupDeleter();
 
-            deleter.Delete(group);
+            List<string> errors;
+
+            int deleted = deleter.Delete(group, out errors);
+
+            if (errors.Count > 0)
+            {
+                MessageBox.Show(
+                    string.Join(Environment.NewLine + Environment.NewLine, errors),
+                    "Some folders could not be deleted",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
 
             MessageBox.Show(
-                "Duplicate backups deleted successfully.",
+                deleted + " backup(s) deleted successfully.",
                 "Completed",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
