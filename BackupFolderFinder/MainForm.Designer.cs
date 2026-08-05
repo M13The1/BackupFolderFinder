@@ -188,6 +188,7 @@
             this.dgvDeleteList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvDeleteList.Size = new System.Drawing.Size(1256, 125);
             this.dgvDeleteList.TabIndex = 6;
+            this.dgvDeleteList.SelectionChanged += new System.EventHandler(this.dgvDeleteList_SelectionChanged);
             // 
             // clmn_Time
             // 

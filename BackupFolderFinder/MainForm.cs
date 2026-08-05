@@ -70,7 +70,7 @@ namespace BackupFolderFinder
 
         private void dgvResults_SelectionChanged(object sender, EventArgs e)
         {
-            dgvDeleteList.Rows.Clear();
+            dgvDeleteList.DataSource = null;
 
             if (dgvResults.CurrentRow == null)
                 return;
@@ -81,13 +81,12 @@ namespace BackupFolderFinder
             if (group == null)
                 return;
 
-            foreach (BackupInfo backup in group.DisplayBackups)
-            {
-                dgvDeleteList.Rows.Add(
-                    backup.Time,
-                    backup.Status,
-                    backup.FolderName);
-            }
+            dgvDeleteList.DataSource = group.DisplayBackups;
+        }
+
+        private void dgvDeleteList_SelectionChanged(object sender, EventArgs e)
+        {
+            // Reserved for future use.
         }
 
         private void btnDeleteSelected_Click(object sender, EventArgs e)
@@ -143,21 +142,11 @@ group.ProtectedCount + " protected backup(s) will also be retained.",
             if (dgvDeleteList.CurrentRow == null)
                 return;
 
-            if (dgvResults.CurrentRow == null)
+            BackupInfo backup =
+                dgvDeleteList.CurrentRow.DataBoundItem as BackupInfo;
+
+            if (backup == null)
                 return;
-
-            BackupRetentionGroup group =
-                dgvResults.CurrentRow.DataBoundItem as BackupRetentionGroup;
-
-            if (group == null)
-                return;
-
-            int index = dgvDeleteList.CurrentRow.Index;
-
-            if (index < 0 || index >= group.DisplayBackups.Count)
-                return;
-
-            BackupInfo backup = group.DisplayBackups[index];
 
             if (!Directory.Exists(backup.TimeFolder))
             {
@@ -172,5 +161,7 @@ group.ProtectedCount + " protected backup(s) will also be retained.",
 
             System.Diagnostics.Process.Start("explorer.exe", backup.TimeFolder);
         }
+
+
     }
 }
