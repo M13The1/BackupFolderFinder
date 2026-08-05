@@ -5,27 +5,50 @@ namespace BackupFolderFinder.Models
 {
     public class BackupRetentionGroup
     {
+        public BackupRetentionGroup()
+        {
+            DeleteBackups = new List<BackupInfo>();
+            ProtectedBackups = new List<BackupInfo>();
+            DisplayBackups = new List<BackupInfo>();
+        }
+
         public string ProjectName { get; set; }
 
         public DateTime BackupDate { get; set; }
 
-        // Backup to retain (earliest HHMM)
+        /// <summary>
+        /// Earliest backup.
+        /// </summary>
         public BackupInfo KeepBackup { get; set; }
 
-        // Backups that can be deleted
+        /// <summary>
+        /// Backups eligible for deletion.
+        /// </summary>
         public List<BackupInfo> DeleteBackups { get; set; }
 
-        // For DataGridView
+        /// <summary>
+        /// Backups protected from deletion.
+        /// </summary>
+        public List<BackupInfo> ProtectedBackups { get; set; }
+
+        /// <summary>
+        /// Complete list displayed in UI.
+        /// </summary>
+        public List<BackupInfo> DisplayBackups { get; set; }
+
         public string KeepTime
         {
-            get { return KeepBackup != null ? KeepBackup.Time : ""; }
+            get
+            {
+                return KeepBackup != null ? KeepBackup.Time : "";
+            }
         }
 
         public string DeleteTimes
         {
             get
             {
-                if (DeleteBackups == null || DeleteBackups.Count == 0)
+                if (DeleteBackups.Count == 0)
                     return "";
 
                 List<string> times = new List<string>();
@@ -37,11 +60,35 @@ namespace BackupFolderFinder.Models
             }
         }
 
+        public string ProtectedTimes
+        {
+            get
+            {
+                if (ProtectedBackups.Count == 0)
+                    return "";
+
+                List<string> times = new List<string>();
+
+                foreach (BackupInfo backup in ProtectedBackups)
+                    times.Add(backup.Time);
+
+                return string.Join(", ", times);
+            }
+        }
+
         public int DeleteCount
         {
             get
             {
-                return DeleteBackups == null ? 0 : DeleteBackups.Count;
+                return DeleteBackups.Count;
+            }
+        }
+
+        public int ProtectedCount
+        {
+            get
+            {
+                return ProtectedBackups.Count;
             }
         }
     }

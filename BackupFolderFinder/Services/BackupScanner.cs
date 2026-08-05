@@ -58,14 +58,18 @@ namespace BackupFolderFinder.Services
                             if (!File.Exists(db1File))
                                 continue;
 
-                            backups.Add(new BackupInfo
-                            {
-                                ProjectName = projectName,
-                                BackupDate = backupDate,
-                                Time = time,
-                                BackupFolder = backupFolder,
-                                Db1File = db1File
-                            });
+                            BackupInfo backup = new BackupInfo();
+
+                            backup.ProjectName = projectName;
+                            backup.BackupDate = backupDate;
+                            backup.Time = time;
+                            backup.TimeFolder = timeFolder;
+                            backup.BackupFolder = backupFolder;
+                            backup.Db1File = db1File;
+                            backup.IsProtected =
+                                BackupRules.IsProtectedFolder(time);
+
+                            backups.Add(backup);
                         }
                     }
                 }

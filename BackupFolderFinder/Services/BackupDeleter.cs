@@ -10,43 +10,50 @@ namespace BackupFolderFinder.Services
         public int Delete(BackupRetentionGroup group, out List<string> errors)
         {
             errors = new List<string>();
+
+            if (group == null)
+                return 0;
+
             int deletedCount = 0;
 
             foreach (BackupInfo backup in group.DeleteBackups)
             {
                 try
                 {
-                    // BackupFolder:
-                    // D:\Backup\Model1\202607\02\1015\Model1_bak
-
-                    DirectoryInfo backupFolder =
-                        new DirectoryInfo(backup.BackupFolder);
-
-                    // HHMM folder:
-                    // D:\Backup\Model1\202607\02\1015
-
-                    DirectoryInfo timeFolder = backupFolder.Parent;
-
-                    if (timeFolder == null)
+                    // Extra safety.
+                    if (backup.IsProtected)
                     {
-                        errors.Add("Unable to determine time folder for: " +
-                                   backup.BackupFolder);
+                        errors.Add(
+                            "Protected backup was skipped:" +
+                            Environment.NewLine +
+                            backup.TimeFolder);
+
                         continue;
                     }
 
-                    if (!timeFolder.Exists)
+                    if (string.IsNullOrWhiteSpace(backup.TimeFolder))
+                    {
+                        errors.Add(
+                            "Time folder not found for backup:" +
+                            Environment.NewLine +
+                            backup.BackupFolder);
+
+                        continue;
+                    }
+
+                    if (!Directory.Exists(backup.TimeFolder))
                     {
                         continue;
                     }
 
-                    timeFolder.Delete(true);
+                    Directory.Delete(backup.TimeFolder, true);
 
                     deletedCount++;
                 }
                 catch (Exception ex)
                 {
                     errors.Add(
-                        backup.BackupFolder +
+                        backup.TimeFolder +
                         Environment.NewLine +
                         ex.Message);
                 }

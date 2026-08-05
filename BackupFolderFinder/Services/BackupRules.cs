@@ -1,54 +1,93 @@
 ﻿using System;
-using System.Text.RegularExpressions;
+using System.Collections.Generic;
+using System.Text;
+using BackupFolderFinder.Models;
 
 namespace BackupFolderFinder.Services
 {
     public static class BackupRules
     {
-        // Matches:
-        // DontDelete
-        // Dont Delete
-        // Dont_Delete
-        // Dont-Delete
-        // DoNotDelete
-        // Do Not Delete
-        // Do_Not_Delete
-        // Do-Not-Delete
-        private static readonly Regex ProtectedFolderRegex =
-            new Regex(
-                @"(dont[\s_-]*delete|do[\s_-]*not[\s_-]*delete)",
-                RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        /// <summary>
+        /// Phrases that indicate a backup should never be deleted.
+        /// Add new phrases here as required.
+        /// </summary>
+        private static readonly List<string> ProtectedPhrases =
+            new List<string>
+            {
+                "dont delete",
+                "do not delete"
+            };
 
         /// <summary>
-        /// Returns true if the backup folder should never be deleted.
+        /// Returns true if the supplied folder name contains a protected phrase.
+        /// Matching is case-insensitive and ignores separators.
         /// </summary>
         public static bool IsProtectedFolder(string folderName)
         {
             if (string.IsNullOrWhiteSpace(folderName))
                 return false;
 
-            return ProtectedFolderRegex.IsMatch(folderName);
+            string normalized = Normalize(folderName);
+
+            foreach (string phrase in ProtectedPhrases)
+            {
+                if (normalized.Contains(Normalize(phrase)))
+                    return true;
+            }
+
+            return false;
         }
 
         /// <summary>
-        /// Returns true if this backup is eligible for deletion.
+        /// Determines whether a backup may be deleted.
         /// </summary>
         public static bool CanDeleteBackup(BackupInfo backup)
         {
             if (backup == null)
                 return false;
 
-            if (string.IsNullOrWhiteSpace(backup.BackupFolder))
-                return false;
+            return !backup.IsProtected;
+        }
 
-            string timeFolder =
-                System.IO.Path.GetFileName(
-                    System.IO.Path.GetDirectoryName(backup.BackupFolder));
+        /// <summary>
+        /// Converts text into a comparable form.
+        /// Examples:
+        ///     DontDelete      -> dont delete
+        ///     Dont_Delete     -> dont delete
+        ///     Do-Not-Delete   -> do not delete
+        /// </summary>
+        private static string Normalize(string value)
+        {
+            value = value.ToLowerInvariant();
 
-            if (string.IsNullOrWhiteSpace(timeFolder))
-                return false;
+            StringBuilder builder = new StringBuilder();
 
-            return !IsProtectedFolder(timeFolder);
+            foreach (char c in value)
+            {
+                if (char.IsLetterOrDigit(c))
+                {
+                    builder.Append(c);
+                }
+                else
+                {
+                    builder.Append(' ');
+                }
+            }
+
+            string normalized = builder.ToString();
+
+            while (normalized.Contains("  "))
+                normalized = normalized.Replace("  ", " ");
+
+            normalized = normalized.Trim();
+
+            // Split PascalCase-like compound words after normalization isn't possible,
+            // so explicitly handle the common concatenated forms.
+            normalized = normalized.Replace("dontdelete", "dont delete");
+            normalized = normalized.Replace("donotdelete", "do not delete");
+            normalized = normalized.Replace("donot", "do not");
+
+            return normalized;
         }
     }
 }

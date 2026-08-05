@@ -60,6 +60,7 @@
     <Compile Include="Services\BackupDeleter.cs" />
     <Compile Include="Services\BackupRetentionAnalyzer.cs" />
     <Compile Include="Services\BackupScanner.cs" />
+	<Compile Include="Services\BackupRules.cs" />
     <Compile Include="Services\DuplicateBackupFinder.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

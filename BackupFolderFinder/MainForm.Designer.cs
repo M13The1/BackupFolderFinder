@@ -33,17 +33,19 @@
             this.btnBrowse = new System.Windows.Forms.Button();
             this.btnScan = new System.Windows.Forms.Button();
             this.dgvResults = new System.Windows.Forms.DataGridView();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.dgvDeleteList = new System.Windows.Forms.DataGridView();
             this.clmn_Project = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clmn_Date = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clmn_Keep = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clmn_Delete = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clmn_DeleteCount = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.dgvDeleteList = new System.Windows.Forms.DataGridView();
             this.clmn_Time = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.clmn_Status = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clmn_Folder = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnDeleteSelected = new System.Windows.Forms.Button();
+            this.btnOpenFolder = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvResults)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDeleteList)).BeginInit();
@@ -100,50 +102,14 @@
             this.dgvResults.Location = new System.Drawing.Point(12, 65);
             this.dgvResults.MultiSelect = false;
             this.dgvResults.Name = "dgvResults";
-            this.dgvResults.ReadOnly = true;
             this.dgvResults.RowHeadersVisible = false;
             this.dgvResults.RowHeadersWidth = 51;
             this.dgvResults.RowTemplate.Height = 24;
             this.dgvResults.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvResults.Size = new System.Drawing.Size(858, 303);
+            this.dgvResults.Size = new System.Drawing.Size(1256, 303);
             this.dgvResults.TabIndex = 4;
             this.dgvResults.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvResults_CellDoubleClick);
             this.dgvResults.SelectionChanged += new System.EventHandler(this.dgvResults_SelectionChanged);
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.lblStatus});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 527);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(882, 26);
-            this.statusStrip1.TabIndex = 5;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // lblStatus
-            // 
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(50, 20);
-            this.lblStatus.Text = "Ready";
-            // 
-            // dgvDeleteList
-            // 
-            this.dgvDeleteList.AllowUserToAddRows = false;
-            this.dgvDeleteList.AllowUserToDeleteRows = false;
-            this.dgvDeleteList.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dgvDeleteList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvDeleteList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.clmn_Time,
-            this.clmn_Folder});
-            this.dgvDeleteList.Location = new System.Drawing.Point(12, 374);
-            this.dgvDeleteList.Name = "dgvDeleteList";
-            this.dgvDeleteList.RowHeadersVisible = false;
-            this.dgvDeleteList.RowHeadersWidth = 51;
-            this.dgvDeleteList.RowTemplate.Height = 24;
-            this.dgvDeleteList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvDeleteList.Size = new System.Drawing.Size(858, 125);
-            this.dgvDeleteList.TabIndex = 6;
             // 
             // clmn_Project
             // 
@@ -185,35 +151,94 @@
             this.clmn_DeleteCount.Name = "clmn_DeleteCount";
             this.clmn_DeleteCount.ReadOnly = true;
             // 
+            // statusStrip1
+            // 
+            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.lblStatus});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 527);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(1280, 26);
+            this.statusStrip1.TabIndex = 5;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // lblStatus
+            // 
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(50, 20);
+            this.lblStatus.Text = "Ready";
+            // 
+            // dgvDeleteList
+            // 
+            this.dgvDeleteList.AllowUserToAddRows = false;
+            this.dgvDeleteList.AllowUserToDeleteRows = false;
+            this.dgvDeleteList.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvDeleteList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvDeleteList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.clmn_Time,
+            this.clmn_Status,
+            this.clmn_Folder});
+            this.dgvDeleteList.Location = new System.Drawing.Point(12, 374);
+            this.dgvDeleteList.MultiSelect = false;
+            this.dgvDeleteList.Name = "dgvDeleteList";
+            this.dgvDeleteList.ReadOnly = true;
+            this.dgvDeleteList.RowHeadersVisible = false;
+            this.dgvDeleteList.RowHeadersWidth = 51;
+            this.dgvDeleteList.RowTemplate.Height = 24;
+            this.dgvDeleteList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvDeleteList.Size = new System.Drawing.Size(1256, 125);
+            this.dgvDeleteList.TabIndex = 6;
+            // 
             // clmn_Time
             // 
-            this.clmn_Time.FillWeight = 106.9519F;
+            this.clmn_Time.FillWeight = 62.39602F;
             this.clmn_Time.HeaderText = "Time";
             this.clmn_Time.MinimumWidth = 6;
             this.clmn_Time.Name = "clmn_Time";
+            this.clmn_Time.ReadOnly = true;
+            // 
+            // clmn_Status
+            // 
+            this.clmn_Status.FillWeight = 80.21391F;
+            this.clmn_Status.HeaderText = "Status";
+            this.clmn_Status.MinimumWidth = 6;
+            this.clmn_Status.Name = "clmn_Status";
+            this.clmn_Status.ReadOnly = true;
             // 
             // clmn_Folder
             // 
-            this.clmn_Folder.FillWeight = 93.04813F;
+            this.clmn_Folder.FillWeight = 157.3901F;
             this.clmn_Folder.HeaderText = "Folder";
             this.clmn_Folder.MinimumWidth = 6;
             this.clmn_Folder.Name = "clmn_Folder";
+            this.clmn_Folder.ReadOnly = true;
             // 
             // btnDeleteSelected
             // 
-            this.btnDeleteSelected.Location = new System.Drawing.Point(378, 501);
+            this.btnDeleteSelected.Location = new System.Drawing.Point(464, 501);
             this.btnDeleteSelected.Name = "btnDeleteSelected";
-            this.btnDeleteSelected.Size = new System.Drawing.Size(75, 23);
+            this.btnDeleteSelected.Size = new System.Drawing.Size(185, 23);
             this.btnDeleteSelected.TabIndex = 7;
             this.btnDeleteSelected.Text = "Delete Selected";
             this.btnDeleteSelected.UseVisualStyleBackColor = true;
             this.btnDeleteSelected.Click += new System.EventHandler(this.btnDeleteSelected_Click);
             // 
+            // btnOpenFolder
+            // 
+            this.btnOpenFolder.Location = new System.Drawing.Point(655, 501);
+            this.btnOpenFolder.Name = "btnOpenFolder";
+            this.btnOpenFolder.Size = new System.Drawing.Size(100, 23);
+            this.btnOpenFolder.TabIndex = 8;
+            this.btnOpenFolder.Text = "Open Folder";
+            this.btnOpenFolder.UseVisualStyleBackColor = true;
+            this.btnOpenFolder.Click += new System.EventHandler(this.btnOpenFolder_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(882, 553);
+            this.ClientSize = new System.Drawing.Size(1280, 553);
+            this.Controls.Add(this.btnOpenFolder);
             this.Controls.Add(this.btnDeleteSelected);
             this.Controls.Add(this.dgvDeleteList);
             this.Controls.Add(this.statusStrip1);
@@ -249,9 +274,11 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn clmn_Keep;
         private System.Windows.Forms.DataGridViewTextBoxColumn clmn_Delete;
         private System.Windows.Forms.DataGridViewTextBoxColumn clmn_DeleteCount;
-        private System.Windows.Forms.DataGridViewTextBoxColumn clmn_Time;
-        private System.Windows.Forms.DataGridViewTextBoxColumn clmn_Folder;
         private System.Windows.Forms.Button btnDeleteSelected;
+        private System.Windows.Forms.DataGridViewTextBoxColumn clmn_Time;
+        private System.Windows.Forms.DataGridViewTextBoxColumn clmn_Status;
+        private System.Windows.Forms.DataGridViewTextBoxColumn clmn_Folder;
+        private System.Windows.Forms.Button btnOpenFolder;
     }
 }
 

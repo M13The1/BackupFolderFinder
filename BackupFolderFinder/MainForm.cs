@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BackupFolderFinder.Services;
 using BackupFolderFinder.Models;
-using System.Collections.Generic;
 
 
 namespace BackupFolderFinder
@@ -82,11 +81,12 @@ namespace BackupFolderFinder
             if (group == null)
                 return;
 
-            foreach (BackupInfo backup in group.DeleteBackups)
+            foreach (BackupInfo backup in group.DisplayBackups)
             {
                 dgvDeleteList.Rows.Add(
                     backup.Time,
-                    backup.BackupFolder);
+                    backup.Status,
+                    backup.FolderName);
             }
         }
 
@@ -103,7 +103,10 @@ namespace BackupFolderFinder
 
             DialogResult result = MessageBox.Show(
                 "Delete " + group.DeleteCount + " duplicate backup(s)?\n\n" +
-                "The first backup (" + group.KeepTime + ") will be retained.",
+                "The first backup (" + group.KeepTime + ") will be retained." +
+Environment.NewLine +
+Environment.NewLine +
+group.ProtectedCount + " protected backup(s) will also be retained.",
                 "Confirm Delete",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
@@ -133,6 +136,41 @@ namespace BackupFolderFinder
                 MessageBoxIcon.Information);
 
             btnScan.PerformClick();
+        }
+
+        private void btnOpenFolder_Click(object sender, EventArgs e)
+        {
+            if (dgvDeleteList.CurrentRow == null)
+                return;
+
+            if (dgvResults.CurrentRow == null)
+                return;
+
+            BackupRetentionGroup group =
+                dgvResults.CurrentRow.DataBoundItem as BackupRetentionGroup;
+
+            if (group == null)
+                return;
+
+            int index = dgvDeleteList.CurrentRow.Index;
+
+            if (index < 0 || index >= group.DisplayBackups.Count)
+                return;
+
+            BackupInfo backup = group.DisplayBackups[index];
+
+            if (!Directory.Exists(backup.TimeFolder))
+            {
+                MessageBox.Show(
+                    "Folder no longer exists.",
+                    "Open Folder",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                return;
+            }
+
+            System.Diagnostics.Process.Start("explorer.exe", backup.TimeFolder);
         }
     }
 }

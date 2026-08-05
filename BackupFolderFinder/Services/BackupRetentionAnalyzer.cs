@@ -32,12 +32,50 @@ namespace BackupFolderFinder.Services
                 retention.ProjectName = group.Key.ProjectName;
                 retention.BackupDate = group.Key.BackupDate;
 
+                // -----------------------------------------------------------------
+                // Keep the earliest backup
+                // -----------------------------------------------------------------
+
                 retention.KeepBackup = ordered.First();
+                retention.KeepBackup.Status = "Keep";
 
-                retention.DeleteBackups =
-                    ordered.Skip(1).ToList();
+                retention.DisplayBackups.Add(retention.KeepBackup);
 
-                result.Add(retention);
+                // -----------------------------------------------------------------
+                // Process remaining backups
+                // -----------------------------------------------------------------
+
+                for (int i = 1; i < ordered.Count; i++)
+                {
+                    BackupInfo backup = ordered[i];
+
+                    if (backup.IsProtected)
+                    {
+                        backup.Status = "Protected";
+
+                        retention.ProtectedBackups.Add(backup);
+                        retention.DisplayBackups.Add(backup);
+                    }
+                    else
+                    {
+                        backup.Status = "Delete";
+
+                        retention.DeleteBackups.Add(backup);
+                        retention.DisplayBackups.Add(backup);
+                    }
+                }
+
+                // Always display backups in time order.
+                retention.DisplayBackups =
+                    retention.DisplayBackups
+                        .OrderBy(b => b.Time)
+                        .ToList();
+
+                // Only display groups requiring user action.
+                if (retention.DeleteBackups.Count > 0)
+                {
+                    result.Add(retention);
+                }
             }
 
             return result;
