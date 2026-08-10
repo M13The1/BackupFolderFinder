@@ -54,24 +54,27 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 9);
+            this.label1.Location = new System.Drawing.Point(9, 7);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(95, 16);
+            this.label1.Size = new System.Drawing.Size(76, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Backup Folder";
             // 
             // txtRootFolder
             // 
-            this.txtRootFolder.Location = new System.Drawing.Point(131, 6);
+            this.txtRootFolder.Location = new System.Drawing.Point(98, 5);
+            this.txtRootFolder.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtRootFolder.Name = "txtRootFolder";
-            this.txtRootFolder.Size = new System.Drawing.Size(600, 22);
+            this.txtRootFolder.Size = new System.Drawing.Size(451, 20);
             this.txtRootFolder.TabIndex = 1;
             // 
             // btnBrowse
             // 
-            this.btnBrowse.Location = new System.Drawing.Point(737, 2);
+            this.btnBrowse.Location = new System.Drawing.Point(553, 2);
+            this.btnBrowse.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnBrowse.Name = "btnBrowse";
-            this.btnBrowse.Size = new System.Drawing.Size(75, 23);
+            this.btnBrowse.Size = new System.Drawing.Size(56, 19);
             this.btnBrowse.TabIndex = 2;
             this.btnBrowse.Text = "Browse...";
             this.btnBrowse.UseVisualStyleBackColor = true;
@@ -79,9 +82,10 @@
             // 
             // btnScan
             // 
-            this.btnScan.Location = new System.Drawing.Point(378, 34);
+            this.btnScan.Location = new System.Drawing.Point(284, 28);
+            this.btnScan.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnScan.Name = "btnScan";
-            this.btnScan.Size = new System.Drawing.Size(75, 23);
+            this.btnScan.Size = new System.Drawing.Size(56, 19);
             this.btnScan.TabIndex = 3;
             this.btnScan.Text = "Scan";
             this.btnScan.UseVisualStyleBackColor = true;
@@ -99,14 +103,15 @@
             this.clmn_Keep,
             this.clmn_Delete,
             this.clmn_DeleteCount});
-            this.dgvResults.Location = new System.Drawing.Point(12, 65);
+            this.dgvResults.Location = new System.Drawing.Point(9, 53);
+            this.dgvResults.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.dgvResults.MultiSelect = false;
             this.dgvResults.Name = "dgvResults";
             this.dgvResults.RowHeadersVisible = false;
             this.dgvResults.RowHeadersWidth = 51;
             this.dgvResults.RowTemplate.Height = 24;
             this.dgvResults.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvResults.Size = new System.Drawing.Size(1256, 303);
+            this.dgvResults.Size = new System.Drawing.Size(1119, 246);
             this.dgvResults.TabIndex = 4;
             this.dgvResults.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvResults_CellDoubleClick);
             this.dgvResults.SelectionChanged += new System.EventHandler(this.dgvResults_SelectionChanged);
@@ -156,16 +161,17 @@
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lblStatus});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 527);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 463);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1280, 26);
+            this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 10, 0);
+            this.statusStrip1.Size = new System.Drawing.Size(1139, 22);
             this.statusStrip1.TabIndex = 5;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // lblStatus
             // 
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(50, 20);
+            this.lblStatus.Size = new System.Drawing.Size(39, 17);
             this.lblStatus.Text = "Ready";
             // 
             // dgvDeleteList
@@ -178,7 +184,8 @@
             this.clmn_Time,
             this.clmn_Status,
             this.clmn_Folder});
-            this.dgvDeleteList.Location = new System.Drawing.Point(12, 374);
+            this.dgvDeleteList.Location = new System.Drawing.Point(9, 304);
+            this.dgvDeleteList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.dgvDeleteList.MultiSelect = false;
             this.dgvDeleteList.Name = "dgvDeleteList";
             this.dgvDeleteList.ReadOnly = true;
@@ -186,7 +193,7 @@
             this.dgvDeleteList.RowHeadersWidth = 51;
             this.dgvDeleteList.RowTemplate.Height = 24;
             this.dgvDeleteList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvDeleteList.Size = new System.Drawing.Size(1256, 125);
+            this.dgvDeleteList.Size = new System.Drawing.Size(1119, 122);
             this.dgvDeleteList.TabIndex = 6;
             this.dgvDeleteList.SelectionChanged += new System.EventHandler(this.dgvDeleteList_SelectionChanged);
             // 
@@ -216,9 +223,10 @@
             // 
             // btnDeleteSelected
             // 
-            this.btnDeleteSelected.Location = new System.Drawing.Point(464, 501);
+            this.btnDeleteSelected.Location = new System.Drawing.Point(424, 430);
+            this.btnDeleteSelected.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnDeleteSelected.Name = "btnDeleteSelected";
-            this.btnDeleteSelected.Size = new System.Drawing.Size(185, 23);
+            this.btnDeleteSelected.Size = new System.Drawing.Size(139, 31);
             this.btnDeleteSelected.TabIndex = 7;
             this.btnDeleteSelected.Text = "Delete Selected";
             this.btnDeleteSelected.UseVisualStyleBackColor = true;
@@ -226,9 +234,10 @@
             // 
             // btnOpenFolder
             // 
-            this.btnOpenFolder.Location = new System.Drawing.Point(655, 501);
+            this.btnOpenFolder.Location = new System.Drawing.Point(567, 430);
+            this.btnOpenFolder.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnOpenFolder.Name = "btnOpenFolder";
-            this.btnOpenFolder.Size = new System.Drawing.Size(100, 23);
+            this.btnOpenFolder.Size = new System.Drawing.Size(84, 31);
             this.btnOpenFolder.TabIndex = 8;
             this.btnOpenFolder.Text = "Open Folder";
             this.btnOpenFolder.UseVisualStyleBackColor = true;
@@ -236,9 +245,9 @@
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1280, 553);
+            this.ClientSize = new System.Drawing.Size(1139, 485);
             this.Controls.Add(this.btnOpenFolder);
             this.Controls.Add(this.btnDeleteSelected);
             this.Controls.Add(this.dgvDeleteList);
@@ -248,6 +257,7 @@
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.txtRootFolder);
             this.Controls.Add(this.label1);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Backup Folder Finder";
