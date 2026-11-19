@@ -6,7 +6,8 @@
         xmlns:vm="clr-namespace:BackupFolderFinder.ViewModels"
         xmlns:converters="clr-namespace:BackupFolderFinder.Converters"
         mc:Ignorable="d"
-        Title="Backup Folder Finder"
+        Title="{Binding WindowTitle}"
+        Icon="app.ico"
         Height="780" Width="1200"
         MinHeight="600" MinWidth="950"
         WindowStartupLocation="CenterScreen"
@@ -48,17 +49,38 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <!-- App Title -->
-                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,14">
-                    <Border Background="#EFF6FF" CornerRadius="6" Width="36" Height="36" Margin="0,0,12,0">
-                        <TextBlock Text="📁" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="Backup Folder Finder" FontSize="18" FontWeight="Bold" Foreground="#0F172A"/>
-                        <TextBlock Text="Scan and clean redundant daily project backups while safeguarding earliest and protected copies"
-                                   FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
+                <!-- App Title Bar -->
+                <Grid Grid.Row="0" Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Title & Subtitle with Icon -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <Border Background="#EFF6FF" CornerRadius="6" Width="38" Height="38" Margin="0,0,12,0" Padding="4"
+                                BorderBrush="#DBEAFE" BorderThickness="1">
+                            <Image Source="app.ico" Width="28" Height="28" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Border>
+                        <StackPanel VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Backup Folder Finder" FontSize="18" FontWeight="Bold" Foreground="#0F172A"/>
+                                <Border Background="#F1F5F9" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="10,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding BuildNumber}" FontSize="11" Foreground="{StaticResource TextMutedBrush}" FontWeight="Medium"/>
+                                </Border>
+                            </StackPanel>
+                            <TextBlock Text="Scan and clean redundant daily project backups while safeguarding earliest and protected copies"
+                                       FontSize="12" Foreground="{StaticResource TextMutedBrush}" Margin="0,2,0,0"/>
+                        </StackPanel>
                     </StackPanel>
-                </StackPanel>
+
+                    <!-- Subtle M13 Branding (Top Right) -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top" Margin="0,2,0,0">
+                        <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="4" Padding="8,2" ToolTip="Created by M13">
+                            <TextBlock Text="M13" FontSize="11" FontWeight="SemiBold" Foreground="#94A3B8"/>
+                        </Border>
+                    </StackPanel>
+                </Grid>
 
                 <!-- Folder Input Row -->
                 <Grid Grid.Row="1">
@@ -326,10 +348,30 @@
 
         <!-- STATUS BAR -->
         <StatusBar Grid.Row="4" Background="#F1F5F9" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="12,6">
-            <StatusBarItem>
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+
+            <StatusBarItem Grid.Column="0">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="ℹ️ " FontSize="12" VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding StatusMessage}" FontSize="12" Foreground="#475569" VerticalAlignment="Center"/>
+                </StackPanel>
+            </StatusBarItem>
+
+            <!-- Subtle Build Number and M13 Tag (Bottom Right) -->
+            <StatusBarItem Grid.Column="1" HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal" Margin="0,0,6,0">
+                    <TextBlock Text="{Binding BuildNumber}" FontSize="11" Foreground="#94A3B8" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="•" FontSize="11" Foreground="#CBD5E1" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding AuthorTag}" FontSize="11" FontWeight="SemiBold" Foreground="#94A3B8" VerticalAlignment="Center" ToolTip="M13"/>
                 </StackPanel>
             </StatusBarItem>
         </StatusBar>

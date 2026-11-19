@@ -17,6 +17,8 @@ A modern WPF desktop application (.NET 8) designed to scan, analyze, and clean r
   - **Redundant Candidates (Delete)**: Identifies subsequent duplicate backups that are safe for deletion.
 - **Modern WPF Experience**:
   - Built with modern **WPF on .NET 8 (LTS)** using the **MVVM** pattern.
+  - Custom multi-resolution application icon (`app.ico`, 16x16 to 256x256) embedded for executable and window chrome.
+  - Build number tracking and subtle `M13` developer signature in both the header card and status bar.
   - Native Windows modern folder picker via `Microsoft.Win32.OpenFolderDialog`.
   - Non-blocking asynchronous scanning and deletion (`Task.Run` with cancellation support).
   - High-DPI support, responsive master-detail layout with an interactive `GridSplitter`.

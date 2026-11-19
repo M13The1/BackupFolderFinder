@@ -8,6 +8,14 @@
     <RootNamespace>BackupFolderFinder</RootNamespace>
     <AssemblyName>BackupFolderFinder</AssemblyName>
     <Deterministic>true</Deterministic>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <Version>1.0.2611.19</Version>
+    <AssemblyVersion>1.0.2611.19</AssemblyVersion>
+    <FileVersion>1.0.2611.19</FileVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="app.ico" />
+  </ItemGroup>
 
 </Project>

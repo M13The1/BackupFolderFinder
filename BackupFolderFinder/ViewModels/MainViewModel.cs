@@ -32,6 +32,10 @@ namespace BackupFolderFinder.ViewModels
         private int _totalProtectedBackups;
         private int _daysRequiringCleanup;
 
+        public string BuildNumber => AppInfo.BuildNumber;
+        public string AuthorTag => AppInfo.AuthorTag;
+        public string WindowTitle => AppInfo.WindowTitle;
+
         public MainViewModel()
         {
             _scanner = new BackupScanner();
