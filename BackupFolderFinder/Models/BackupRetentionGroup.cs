@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using BackupFolderFinder.Common;
 
 namespace BackupFolderFinder.Models
 {
@@ -75,5 +77,28 @@ namespace BackupFolderFinder.Models
         public int ProtectedCount => ProtectedBackups?.Count ?? 0;
 
         public int TotalCount => (KeepBackup != null ? 1 : 0) + DeleteCount + ProtectedCount;
+
+        /// <summary>
+        /// Total storage size in bytes of candidate backups eligible for deletion.
+        /// </summary>
+        public long ReclaimableSizeBytes => DeleteBackups?.Sum(b => b.SizeBytes) ?? 0;
+
+        /// <summary>
+        /// Formatted reclaimable storage size (e.g. 1.25 GB).
+        /// </summary>
+        public string ReclaimableSizeFormatted => ByteSizeFormatter.Format(ReclaimableSizeBytes);
+
+        /// <summary>
+        /// Total storage size in bytes of all backups on this date.
+        /// </summary>
+        public long TotalSizeBytes =>
+            (KeepBackup?.SizeBytes ?? 0) +
+            (DeleteBackups?.Sum(b => b.SizeBytes) ?? 0) +
+            (ProtectedBackups?.Sum(b => b.SizeBytes) ?? 0);
+
+        /// <summary>
+        /// Formatted total storage size of all backups on this date.
+        /// </summary>
+        public string TotalSizeFormatted => ByteSizeFormatter.Format(TotalSizeBytes);
     }
 }

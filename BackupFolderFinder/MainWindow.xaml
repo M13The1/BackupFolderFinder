@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="{Binding WindowTitle}"
         Icon="app.ico"
-        Height="780" Width="1200"
+        Height="780" Width="1240"
         MinHeight="600" MinWidth="950"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource BackgroundBrush}">
@@ -127,49 +127,65 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <!-- Card 1: Days to Clean -->
-            <Border Grid.Column="0" Margin="0,0,8,0" Background="{StaticResource SurfaceBrush}"
-                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="14,10">
+            <Border Grid.Column="0" Margin="0,0,6,0" Background="{StaticResource SurfaceBrush}"
+                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="12,10">
                 <StackPanel Orientation="Horizontal">
-                    <Border Background="#FEF3C7" CornerRadius="5" Width="36" Height="36" Margin="0,0,12,0">
+                    <Border Background="#FEF3C7" CornerRadius="5" Width="36" Height="36" Margin="0,0,10,0">
                         <TextBlock Text="📅" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock Text="{Binding DaysRequiringCleanup, StringFormat='{}{0} Days'}"
-                                   FontSize="16" FontWeight="Bold" Foreground="#92400E"/>
+                                   FontSize="15" FontWeight="Bold" Foreground="#92400E"/>
                         <TextBlock Text="Requiring cleanup action" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
 
             <!-- Card 2: Backups to Delete -->
-            <Border Grid.Column="1" Margin="4,0,4,0" Background="{StaticResource SurfaceBrush}"
-                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="14,10">
+            <Border Grid.Column="1" Margin="3,0,3,0" Background="{StaticResource SurfaceBrush}"
+                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="12,10">
                 <StackPanel Orientation="Horizontal">
-                    <Border Background="#FEE2E2" CornerRadius="5" Width="36" Height="36" Margin="0,0,12,0">
+                    <Border Background="#FEE2E2" CornerRadius="5" Width="36" Height="36" Margin="0,0,10,0">
                         <TextBlock Text="🗑️" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock Text="{Binding TotalCandidateDeletes, StringFormat='{}{0} Redundant'}"
-                                   FontSize="16" FontWeight="Bold" Foreground="#B91C1C"/>
-                        <TextBlock Text="Candidate backup folders to delete" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
+                                   FontSize="15" FontWeight="Bold" Foreground="#B91C1C"/>
+                        <TextBlock Text="Duplicate candidate folders" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
 
-            <!-- Card 3: Protected Backups -->
-            <Border Grid.Column="2" Margin="8,0,0,0" Background="{StaticResource SurfaceBrush}"
-                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="14,10">
+            <!-- Card 3: Storage to Reclaim -->
+            <Border Grid.Column="2" Margin="3,0,3,0" Background="{StaticResource SurfaceBrush}"
+                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="12,10">
                 <StackPanel Orientation="Horizontal">
-                    <Border Background="#DBEAFE" CornerRadius="5" Width="36" Height="36" Margin="0,0,12,0">
+                    <Border Background="#DCFCE7" CornerRadius="5" Width="36" Height="36" Margin="0,0,10,0">
+                        <TextBlock Text="💾" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{Binding TotalReclaimableSizeFormatted}"
+                                   FontSize="15" FontWeight="Bold" Foreground="#15803D"/>
+                        <TextBlock Text="Reclaimable disk storage" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Card 4: Protected Backups -->
+            <Border Grid.Column="3" Margin="6,0,0,0" Background="{StaticResource SurfaceBrush}"
+                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="12,10">
+                <StackPanel Orientation="Horizontal">
+                    <Border Background="#DBEAFE" CornerRadius="5" Width="36" Height="36" Margin="0,0,10,0">
                         <TextBlock Text="🛡️" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock Text="{Binding TotalProtectedBackups, StringFormat='{}{0} Protected'}"
-                                   FontSize="16" FontWeight="Bold" Foreground="#1E40AF"/>
-                        <TextBlock Text="Backups preserved by safety rules" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
+                                   FontSize="15" FontWeight="Bold" Foreground="#1E40AF"/>
+                        <TextBlock Text="Preserved by safety rules" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
@@ -210,9 +226,9 @@
                               SelectedItem="{Binding SelectedGroup}"
                               BorderThickness="0">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Project" Binding="{Binding ProjectName}" Width="150"/>
-                            <DataGridTextColumn Header="Date" Binding="{Binding BackupDateFormatted}" Width="120"/>
-                            <DataGridTemplateColumn Header="Keep (Earliest)" Width="120">
+                            <DataGridTextColumn Header="Project" Binding="{Binding ProjectName}" Width="140"/>
+                            <DataGridTextColumn Header="Date" Binding="{Binding BackupDateFormatted}" Width="110"/>
+                            <DataGridTemplateColumn Header="Keep (Earliest)" Width="110">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border Background="#E6F4EA" BorderBrush="#B4E1C3" BorderThickness="1"
@@ -223,7 +239,7 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTextColumn Header="Delete Candidates" Binding="{Binding DeleteTimes}" Width="2*"/>
-                            <DataGridTemplateColumn Header="Delete Count" Width="110">
+                            <DataGridTemplateColumn Header="Delete Count" Width="105">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border Background="#FCE8E6" BorderBrush="#F5C3C0" BorderThickness="1"
@@ -233,8 +249,19 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
+                            <!-- Reclaimable Space Column -->
+                            <DataGridTemplateColumn Header="Reclaimable Space" Width="135">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#F0FDF4" BorderBrush="#BBF7D0" BorderThickness="1"
+                                                CornerRadius="4" Padding="7,2" HorizontalAlignment="Left">
+                                            <TextBlock Text="{Binding ReclaimableSizeFormatted}" Foreground="#15803D" FontWeight="Bold" FontSize="12"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <DataGridTextColumn Header="Protected Backups" Binding="{Binding ProtectedTimes}" Width="1.5*"/>
-                            <DataGridTemplateColumn Header="Protected Count" Width="120">
+                            <DataGridTemplateColumn Header="Protected Count" Width="115">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border Background="#E8F0FE" BorderBrush="#C3DAFE" BorderThickness="1"
@@ -274,6 +301,9 @@
                                 <TextBlock Text="{Binding SelectedGroup.BackupDateFormatted, StringFormat='{} ({0})'}"
                                            FontWeight="Normal" FontSize="13" Foreground="{StaticResource TextMutedBrush}"
                                            Visibility="{Binding SelectedGroup, Converter={StaticResource NullToVisConverter}}"/>
+                                <TextBlock Text="{Binding SelectedGroup.TotalSizeFormatted, StringFormat='{} — Total Day Size: {0}'}"
+                                           FontWeight="Medium" FontSize="12" Foreground="#047857" Margin="10,0,0,0"
+                                           Visibility="{Binding SelectedGroup, Converter={StaticResource NullToVisConverter}}"/>
                             </StackPanel>
 
                             <TextBlock HorizontalAlignment="Right" FontSize="12" Foreground="{StaticResource TextMutedBrush}"
@@ -293,7 +323,9 @@
                             </ContextMenu>
                         </DataGrid.ContextMenu>
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Time" Binding="{Binding Time}" Width="100"/>
+                            <DataGridTextColumn Header="Time" Binding="{Binding Time}" Width="90"/>
+                            <!-- Size Column -->
+                            <DataGridTextColumn Header="Size" Binding="{Binding SizeFormatted}" Width="95"/>
                             <!-- Status with Color Badge Pill -->
                             <DataGridTemplateColumn Header="Status" Width="120">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -326,23 +358,35 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Open Folder Button -->
+                <!-- Left: Open Folder Button -->
                 <Button Grid.Column="0" Style="{StaticResource ModernButton}" Content="📂  Open in Explorer"
                         Command="{Binding OpenFolderCommand}"
                         ToolTip="Open the selected backup folder in Windows File Explorer (or double-click row)"/>
 
-                <!-- Right Action Buttons -->
-                <Button Grid.Column="2" Style="{StaticResource DangerButton}" Content="🗑️  Delete Selected Day"
+                <!-- Center Right: Recycle Bin Safety Toggle -->
+                <CheckBox Grid.Column="2" IsChecked="{Binding SendToRecycleBin}" VerticalAlignment="Center" Margin="0,0,18,0"
+                          Cursor="Hand"
+                          ToolTip="When enabled, backup folders are sent to the Windows Recycle Bin so they can be restored if needed. Uncheck only for permanent deletion.">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="♻️ " FontSize="12" VerticalAlignment="Center"/>
+                        <TextBlock Text="Send to Windows Recycle Bin" FontWeight="SemiBold" FontSize="12" Foreground="#334155" VerticalAlignment="Center"/>
+                        <TextBlock Text=" (Safe Undo)" FontSize="11" Foreground="#16A34A" FontWeight="Medium" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </CheckBox>
+
+                <!-- Right: Action Buttons -->
+                <Button Grid.Column="3" Style="{StaticResource DangerButton}" Content="🗑️  Clean Selected Day"
                         Command="{Binding DeleteSelectedCommand}"
                         Margin="0,0,10,0"
-                        ToolTip="Permanently delete candidate backups for the currently selected day"/>
+                        ToolTip="Clean candidate backups for the currently selected day"/>
 
-                <Button Grid.Column="3" Style="{StaticResource DangerButton}" Content="⚠️  Delete All Candidate Backups"
+                <Button Grid.Column="4" Style="{StaticResource DangerButton}" Content="⚠️  Clean All Candidate Backups"
                         Command="{Binding DeleteAllCommand}"
                         Background="#991B1B"
-                        ToolTip="Permanently delete all candidate redundant backups across all days"/>
+                        ToolTip="Clean all candidate redundant backups across all days"/>
             </Grid>
         </Border>
 

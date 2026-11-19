@@ -24,9 +24,15 @@ A modern WPF desktop application (.NET 8) designed to scan, analyze, and clean r
   - High-DPI support, responsive master-detail layout with an interactive `GridSplitter`.
   - Visual status chips / badges (Green for Keep, Blue for Protected, Red for Delete).
   - Summary cards displaying days requiring cleanup, redundant backup count, and protected backup count.
-- **Safety & Deletion Controls**:
-  - Delete candidate backups for the currently selected day or perform a confirmed batch cleanup across all days.
-  - Multi-layer protection check: Deleter verifies that folders flagged as protected are never deleted.
+- **Storage Metrics & Space Calculation**:
+  - Automatically calculates directory sizes for each backup folder.
+  - Displays individual backup sizes (KB, MB, GB) and total reclaimable space per day.
+  - Dedicated storage metric card in UI header showing total reclaimable disk space across all scanned backups.
+- **Enhanced Deletion Safety (Windows Recycle Bin)**:
+  - Default deletion uses Windows Shell (`SHFileOperation`) to move backups to the **Windows Recycle Bin**, allowing full recovery in case of accidental deletions.
+  - UI toggle enables switching between **Recycle Bin (Safe)** and **Permanent Deletion**.
+  - Multi-layer protection check: Deleter verifies that folders flagged as protected are never deleted or recycled.
+  - Confirmation dialogs report exact disk space to be freed and deletion destination.
   - Direct Windows File Explorer integration (Open Folder button, double-click, and right-click context menu).
 
 ---

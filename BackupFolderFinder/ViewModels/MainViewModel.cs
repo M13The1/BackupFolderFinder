@@ -24,6 +24,7 @@ namespace BackupFolderFinder.ViewModels
         private string _rootFolder;
         private string _statusMessage = "Ready. Select a backup root directory and click Scan.";
         private bool _isBusy;
+        private bool _sendToRecycleBin = true;
         private BackupRetentionGroup _selectedGroup;
         private BackupInfo _selectedBackup;
         private CancellationTokenSource _cts;
@@ -31,6 +32,7 @@ namespace BackupFolderFinder.ViewModels
         private int _totalCandidateDeletes;
         private int _totalProtectedBackups;
         private int _daysRequiringCleanup;
+        private long _totalReclaimableSizeBytes;
 
         public string BuildNumber => AppInfo.BuildNumber;
         public string AuthorTag => AppInfo.AuthorTag;
@@ -84,6 +86,15 @@ namespace BackupFolderFinder.ViewModels
             }
         }
 
+        /// <summary>
+        /// When true, deletes are sent to Windows Recycle Bin for safety. When false, permanently deleted.
+        /// </summary>
+        public bool SendToRecycleBin
+        {
+            get => _sendToRecycleBin;
+            set => SetProperty(ref _sendToRecycleBin, value);
+        }
+
         public ObservableCollection<BackupRetentionGroup> RetentionGroups { get; }
 
         public ObservableCollection<BackupInfo> DisplayBackups { get; }
@@ -131,6 +142,20 @@ namespace BackupFolderFinder.ViewModels
             set => SetProperty(ref _daysRequiringCleanup, value);
         }
 
+        public long TotalReclaimableSizeBytes
+        {
+            get => _totalReclaimableSizeBytes;
+            set
+            {
+                if (SetProperty(ref _totalReclaimableSizeBytes, value))
+                {
+                    OnPropertyChanged(nameof(TotalReclaimableSizeFormatted));
+                }
+            }
+        }
+
+        public string TotalReclaimableSizeFormatted => ByteSizeFormatter.Format(TotalReclaimableSizeBytes);
+
         public ICommand BrowseFolderCommand { get; }
         public ICommand ScanCommand { get; }
         public ICommand CancelCommand { get; }
@@ -175,14 +200,14 @@ namespace BackupFolderFinder.ViewModels
 
             IsBusy = true;
             _cts = new CancellationTokenSource();
-            StatusMessage = "Scanning for backup folders...";
+            StatusMessage = "Scanning for backup folders and calculating storage sizes...";
 
             try
             {
                 var progress = new Progress<string>(msg => StatusMessage = msg);
                 var backups = await _scanner.ScanAsync(RootFolder, progress, _cts.Token);
 
-                StatusMessage = "Analyzing backup retention rules...";
+                StatusMessage = "Analyzing backup retention rules and storage metrics...";
                 var retentionGroups = await Task.Run(() => _analyzer.Analyze(backups));
 
                 RetentionGroups.Clear();
@@ -194,11 +219,12 @@ namespace BackupFolderFinder.ViewModels
                 DaysRequiringCleanup = RetentionGroups.Count;
                 TotalCandidateDeletes = RetentionGroups.Sum(g => g.DeleteCount);
                 TotalProtectedBackups = RetentionGroups.Sum(g => g.ProtectedCount);
+                TotalReclaimableSizeBytes = RetentionGroups.Sum(g => g.ReclaimableSizeBytes);
 
                 if (RetentionGroups.Count > 0)
                 {
                     SelectedGroup = RetentionGroups[0];
-                    StatusMessage = $"Scan complete. {DaysRequiringCleanup} day(s) require cleanup ({TotalCandidateDeletes} redundant backup(s), {TotalProtectedBackups} protected).";
+                    StatusMessage = $"Scan complete. {DaysRequiringCleanup} day(s) require cleanup: {TotalCandidateDeletes} redundant backup(s), {TotalReclaimableSizeFormatted} reclaimable ({TotalProtectedBackups} protected).";
                 }
                 else
                 {
@@ -255,34 +281,46 @@ namespace BackupFolderFinder.ViewModels
             if (group == null || group.DeleteCount == 0)
                 return;
 
+            string targetMode = SendToRecycleBin 
+                ? "Windows Recycle Bin (Safe / Recoverable)" 
+                : "PERMANENT DELETION (Cannot be undone!)";
+
             string confirmMessage =
                 $"Delete {group.DeleteCount} duplicate backup(s) for project '{group.ProjectName}' on {group.BackupDateFormatted}?\n\n" +
-                $"Retained earliest backup: {group.KeepTime}\n" +
-                (group.ProtectedCount > 0 ? $"Protected backup(s) retained: {group.ProtectedTimes} ({group.ProtectedCount})\n\n" : "\n") +
-                $"Backup(s) to be permanently deleted:\n{group.DeleteTimes}";
+                $"💾 Storage to reclaim: {group.ReclaimableSizeFormatted}\n" +
+                $"🛡️ Earliest backup retained: {group.KeepTime}\n" +
+                (group.ProtectedCount > 0 ? $"🛡️ Protected backup(s) preserved: {group.ProtectedTimes} ({group.ProtectedCount})\n\n" : "\n") +
+                $"Target Destination: {targetMode}\n\n" +
+                $"Candidate folder(s):\n{group.DeleteTimes}";
 
-            var result = MessageBox.Show(confirmMessage, "Confirm Deletion", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            var result = MessageBox.Show(confirmMessage, "Confirm Backup Cleanup", MessageBoxButton.YesNo, 
+                SendToRecycleBin ? MessageBoxImage.Question : MessageBoxImage.Warning);
             if (result != MessageBoxResult.Yes)
                 return;
 
             IsBusy = true;
-            StatusMessage = $"Deleting {group.DeleteCount} redundant backup(s)...";
+            var mode = SendToRecycleBin ? DeletionMode.RecycleBin : DeletionMode.Permanent;
+            StatusMessage = $"Cleaning {group.DeleteCount} redundant backup(s) ({group.ReclaimableSizeFormatted})...";
 
             try
             {
-                var delResult = await _deleter.DeleteGroupAsync(group);
+                var delResult = await _deleter.DeleteGroupAsync(group, mode);
 
                 if (delResult.HasErrors)
                 {
                     MessageBox.Show(
                         string.Join(Environment.NewLine + Environment.NewLine, delResult.Errors),
-                        "Some folders could not be deleted",
+                        "Some folders could not be removed",
                         MessageBoxButton.OK,
                         MessageBoxImage.Warning);
                 }
 
+                string destinationVerb = delResult.ModeUsed == DeletionMode.RecycleBin 
+                    ? "moved to the Recycle Bin" 
+                    : "permanently deleted";
+
                 MessageBox.Show(
-                    $"{delResult.DeletedCount} backup(s) deleted successfully.",
+                    $"{delResult.DeletedCount} backup folder(s) successfully {destinationVerb}.\nReclaimed space: {delResult.ReclaimedSizeFormatted}.",
                     "Cleanup Complete",
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
@@ -304,37 +342,49 @@ namespace BackupFolderFinder.ViewModels
             if (RetentionGroups.Count == 0 || TotalCandidateDeletes == 0)
                 return;
 
-            string confirmMessage =
-                $"Are you sure you want to delete ALL candidate duplicate backups?\n\n" +
-                $"• Total days to clean: {DaysRequiringCleanup}\n" +
-                $"• Total folders to be deleted: {TotalCandidateDeletes}\n" +
-                $"• Protected backups that will remain safe: {TotalProtectedBackups}\n\n" +
-                $"Earliest daily backups will be preserved for each project.\nThis action permanently deletes the redundant folders.";
+            string targetMode = SendToRecycleBin 
+                ? "Windows Recycle Bin (Safe / Recoverable)" 
+                : "PERMANENT DELETION (Cannot be undone!)";
 
-            var result = MessageBox.Show(confirmMessage, "Confirm Batch Deletion", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            string confirmMessage =
+                $"Are you sure you want to clean ALL candidate duplicate backups?\n\n" +
+                $"• Total days to clean: {DaysRequiringCleanup}\n" +
+                $"• Total backup folders to remove: {TotalCandidateDeletes}\n" +
+                $"• 💾 Total storage to reclaim: {TotalReclaimableSizeFormatted}\n" +
+                $"• 🛡️ Protected backups preserved: {TotalProtectedBackups}\n" +
+                $"• Target Destination: {targetMode}\n\n" +
+                $"Earliest daily backups will be preserved for each project.";
+
+            var result = MessageBox.Show(confirmMessage, "Confirm Batch Backup Cleanup", MessageBoxButton.YesNo,
+                SendToRecycleBin ? MessageBoxImage.Question : MessageBoxImage.Warning);
             if (result != MessageBoxResult.Yes)
                 return;
 
             IsBusy = true;
             _cts = new CancellationTokenSource();
-            StatusMessage = "Batch deletion in progress...";
+            var mode = SendToRecycleBin ? DeletionMode.RecycleBin : DeletionMode.Permanent;
+            StatusMessage = "Batch cleanup in progress...";
 
             try
             {
                 var progress = new Progress<string>(msg => StatusMessage = msg);
-                var delResult = await _deleter.DeleteGroupsAsync(RetentionGroups.ToList(), progress, _cts.Token);
+                var delResult = await _deleter.DeleteGroupsAsync(RetentionGroups.ToList(), mode, progress, _cts.Token);
 
                 if (delResult.HasErrors)
                 {
                     MessageBox.Show(
                         string.Join(Environment.NewLine + Environment.NewLine, delResult.Errors),
-                        "Some folders could not be deleted",
+                        "Some folders could not be removed",
                         MessageBoxButton.OK,
                         MessageBoxImage.Warning);
                 }
 
+                string destinationVerb = delResult.ModeUsed == DeletionMode.RecycleBin 
+                    ? "moved to the Recycle Bin" 
+                    : "permanently deleted";
+
                 MessageBox.Show(
-                    $"{delResult.DeletedCount} backup folder(s) deleted successfully across {DaysRequiringCleanup} day(s).",
+                    $"{delResult.DeletedCount} backup folder(s) successfully {destinationVerb} across {DaysRequiringCleanup} day(s).\nTotal reclaimed storage: {delResult.ReclaimedSizeFormatted}.",
                     "Batch Cleanup Complete",
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
@@ -343,11 +393,11 @@ namespace BackupFolderFinder.ViewModels
             }
             catch (OperationCanceledException)
             {
-                StatusMessage = "Batch deletion cancelled.";
+                StatusMessage = "Batch cleanup cancelled.";
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Batch deletion error:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Batch cleanup error:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {

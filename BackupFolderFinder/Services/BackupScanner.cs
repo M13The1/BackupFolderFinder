@@ -120,7 +120,8 @@ namespace BackupFolderFinder.Services
                                 TimeFolder = timeFolder,
                                 BackupFolder = backupFolder,
                                 Db1File = db1File,
-                                IsProtected = BackupRules.IsProtectedFolder(time)
+                                IsProtected = BackupRules.IsProtectedFolder(time),
+                                SizeBytes = BackupFolderFinder.Common.ByteSizeFormatter.CalculateDirectorySize(timeFolder)
                             };
 
                             backups.Add(backup);

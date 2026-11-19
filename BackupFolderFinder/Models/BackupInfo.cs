@@ -1,4 +1,5 @@
 ﻿using System;
+using BackupFolderFinder.Common;
 
 namespace BackupFolderFinder.Models
 {
@@ -45,6 +46,16 @@ namespace BackupFolderFinder.Models
         /// Keep / Protected / Delete
         /// </summary>
         public string Status { get; set; }
+
+        /// <summary>
+        /// Size in bytes of the backup folder.
+        /// </summary>
+        public long SizeBytes { get; set; }
+
+        /// <summary>
+        /// Formatted human-readable size (e.g. 24.5 MB).
+        /// </summary>
+        public string SizeFormatted => ByteSizeFormatter.Format(SizeBytes);
 
         public string FolderName
         {
