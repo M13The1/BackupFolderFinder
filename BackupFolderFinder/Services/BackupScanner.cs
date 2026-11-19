@@ -2,33 +2,75 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using BackupFolderFinder.Models;
 
 namespace BackupFolderFinder.Services
 {
     public class BackupScanner
     {
-        public List<BackupInfo> Scan(string rootFolder)
+        public List<BackupInfo> Scan(string rootFolder, IProgress<string> progress = null, CancellationToken cancellationToken = default)
         {
             List<BackupInfo> backups = new List<BackupInfo>();
 
-            // Project folders
-            foreach (string projectFolder in Directory.GetDirectories(rootFolder))
+            if (string.IsNullOrWhiteSpace(rootFolder) || !Directory.Exists(rootFolder))
+                return backups;
+
+            string[] projectFolders;
+            try
             {
+                projectFolders = Directory.GetDirectories(rootFolder);
+            }
+            catch (Exception ex)
+            {
+                progress?.Report($"Error accessing root directory: {ex.Message}");
+                return backups;
+            }
+
+            // Project folders
+            foreach (string projectFolder in projectFolders)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 string projectName = Path.GetFileName(projectFolder);
+                progress?.Report($"Scanning project: {projectName}...");
+
+                string[] monthFolders;
+                try
+                {
+                    monthFolders = Directory.GetDirectories(projectFolder);
+                }
+                catch
+                {
+                    continue;
+                }
 
                 // YYYYMM folders
-                foreach (string monthFolder in Directory.GetDirectories(projectFolder))
+                foreach (string monthFolder in monthFolders)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
+
                     string monthName = Path.GetFileName(monthFolder);
 
-                    // DD folders
-                    foreach (string dayFolder in Directory.GetDirectories(monthFolder))
+                    string[] dayFolders;
+                    try
                     {
+                        dayFolders = Directory.GetDirectories(monthFolder);
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+
+                    // DD folders
+                    foreach (string dayFolder in dayFolders)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+
                         string dayName = Path.GetFileName(dayFolder);
 
                         DateTime backupDate;
-
                         bool validDate = DateTime.TryParseExact(
                             monthName + dayName,
                             "yyyyMMdd",
@@ -39,9 +81,21 @@ namespace BackupFolderFinder.Services
                         if (!validDate)
                             continue;
 
-                        // HHMM folders
-                        foreach (string timeFolder in Directory.GetDirectories(dayFolder))
+                        string[] timeFolders;
+                        try
                         {
+                            timeFolders = Directory.GetDirectories(dayFolder);
+                        }
+                        catch
+                        {
+                            continue;
+                        }
+
+                        // HHMM folders
+                        foreach (string timeFolder in timeFolders)
+                        {
+                            cancellationToken.ThrowIfCancellationRequested();
+
                             string time = Path.GetFileName(timeFolder);
 
                             string backupFolder = Path.Combine(
@@ -58,16 +112,16 @@ namespace BackupFolderFinder.Services
                             if (!File.Exists(db1File))
                                 continue;
 
-                            BackupInfo backup = new BackupInfo();
-
-                            backup.ProjectName = projectName;
-                            backup.BackupDate = backupDate;
-                            backup.Time = time;
-                            backup.TimeFolder = timeFolder;
-                            backup.BackupFolder = backupFolder;
-                            backup.Db1File = db1File;
-                            backup.IsProtected =
-                                BackupRules.IsProtectedFolder(time);
+                            BackupInfo backup = new BackupInfo
+                            {
+                                ProjectName = projectName,
+                                BackupDate = backupDate,
+                                Time = time,
+                                TimeFolder = timeFolder,
+                                BackupFolder = backupFolder,
+                                Db1File = db1File,
+                                IsProtected = BackupRules.IsProtectedFolder(time)
+                            };
 
                             backups.Add(backup);
                         }
@@ -76,6 +130,11 @@ namespace BackupFolderFinder.Services
             }
 
             return backups;
+        }
+
+        public Task<List<BackupInfo>> ScanAsync(string rootFolder, IProgress<string> progress = null, CancellationToken cancellationToken = default)
+        {
+            return Task.Run(() => Scan(rootFolder, progress, cancellationToken), cancellationToken);
         }
     }
 }

@@ -16,6 +16,8 @@ namespace BackupFolderFinder.Models
 
         public DateTime BackupDate { get; set; }
 
+        public string BackupDateFormatted => BackupDate.ToString("dd-MMM-yyyy");
+
         /// <summary>
         /// Earliest backup.
         /// </summary>
@@ -36,23 +38,16 @@ namespace BackupFolderFinder.Models
         /// </summary>
         public List<BackupInfo> DisplayBackups { get; set; }
 
-        public string KeepTime
-        {
-            get
-            {
-                return KeepBackup != null ? KeepBackup.Time : "";
-            }
-        }
+        public string KeepTime => KeepBackup != null ? KeepBackup.Time : string.Empty;
 
         public string DeleteTimes
         {
             get
             {
-                if (DeleteBackups.Count == 0)
-                    return "";
+                if (DeleteBackups == null || DeleteBackups.Count == 0)
+                    return string.Empty;
 
                 List<string> times = new List<string>();
-
                 foreach (BackupInfo backup in DeleteBackups)
                     times.Add(backup.Time);
 
@@ -64,11 +59,10 @@ namespace BackupFolderFinder.Models
         {
             get
             {
-                if (ProtectedBackups.Count == 0)
-                    return "";
+                if (ProtectedBackups == null || ProtectedBackups.Count == 0)
+                    return string.Empty;
 
                 List<string> times = new List<string>();
-
                 foreach (BackupInfo backup in ProtectedBackups)
                     times.Add(backup.Time);
 
@@ -76,20 +70,10 @@ namespace BackupFolderFinder.Models
             }
         }
 
-        public int DeleteCount
-        {
-            get
-            {
-                return DeleteBackups.Count;
-            }
-        }
+        public int DeleteCount => DeleteBackups?.Count ?? 0;
 
-        public int ProtectedCount
-        {
-            get
-            {
-                return ProtectedBackups.Count;
-            }
-        }
+        public int ProtectedCount => ProtectedBackups?.Count ?? 0;
+
+        public int TotalCount => (KeepBackup != null ? 1 : 0) + DeleteCount + ProtectedCount;
     }
 }
